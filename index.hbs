@@ -1,90 +1,30 @@
-{{!--
-This template is used for the index page.
-It can be used also as the home page or the default page.
---}}
 
-{{!-- The tag below means: insert everything in this file
-into the {body} of the default.hbs template --}}
-{{!< default}}
+<header>
+  <h1 class="page-title">{{@blog.title}}</h1>
+  <p> Edited by <a href="https://optivelabs.com"> Optive </a>
+  <h2 class="page-description">{{@blog.description}}</h2>
+</header>
 
-<div class="main-wrap">
-  {{!--Special header.hbs partial to generate the <header> tag--}}
-  {{> header background=@site.cover_image}}
-  {{!-- Inject styles of the hero image to make it responsive --}}
-  {{> hero background=@site.cover_image}}
-  <div class="m-hero__content" data-aos="fade-down">
-    <h1 class="m-hero-title bigger">{{@site.title}}</h1>
-    {{#if @site.description}}
-    <p class="m-hero-description bigger">{{@site.description}}</p>
-    {{/if}}
-    {{#if @labs.subscribers}}
-    <a href="{{@site.url}}/subscribe" class="m-button filled">{{t "Subscribe"}}</a>
-    {{/if}}
-  </div>
-  </header>
-  
-  <main>
-    <div class="l-content">
-      <div class="l-wrapper" data-aos="fade-up" data-aos-delay="300">
-        <div class="l-grid centered">
-          {{#get "posts" filter="featured:true" include="authors,tags" limit="5" as |featured|}}
-          {{#if featured}}
-          <div class="m-featured-slider">
-            <div class="m-featured-slider__list js-featured-articles">
-              {{#foreach featured}}
-              <div class="m-featured-slider__list__item">
-                {{#if feature_image}}
-                <article class="m-featured-article">
-                  {{else}}
-                  <article class="m-featured-article no-picture">
-                    {{/if}}
-                    <div class="m-featured-article__picture">
-                      {{#if feature_image}}
-                      <div style="background-image: url({{feature_image}});"></div>
-                      {{/if}}
-                    </div>
-                    <div class="m-featured-article__meta">
-                      <a href="{{primary_author.url}}" class="m-featured-article__author js-tooltip" aria-label="Authors" data-tippy-content="{{t "Posted by"}} {{primary_author.name}} {{authors autolink="false" from="2" prefix=(t "Among with") separator=" , "}}">
-                        {{#if primary_author.profile_image}}
-                        <div style="background-image: url({{primary_author.profile_image}});"></div>
-                        {{else}}
-                        <div style="background-image: url({{asset "images/default-avatar-square-small.jpg"}});"></div>
-                        {{/if}}
-                      </a>
-                      {{#if primary_tag}}
-                      <a href="{{primary_tag.url}}" class="m-featured-article__tag">{{primary_tag.name}}</a>
-                      {{/if}}
-                    </div>
-                    <div class="m-featured-article__ribbon">
-                      <span class="icon-star"></span>
-                      <span>{{t "Featured"}}</span>
-                    </div>
-                    <a href="{{url}}" class="m-featured-article__content">
-                      <h1 class="m-featured-article__title">{{title}}</h1>
-                      <div class="m-featured-article__timestamp">
-                        <span>{{date published_at timeago="true"}}</span>
-                        <span>&bull;</span>
-                        <span>{{reading_time minute=(t "1 min read") minutes=(t "% min read")}}</span>
-                      </div>
-                    </a>
-                  </article>
-              </div>
-              {{/foreach}}
-            </div>
-          </div>
-          {{/if}}
-          {{/get}}
-          {{!-- The tag below iterates over all the posts --}}
-          {{> "loop"}}
-        </div>
-      </div>
-      {{!-- Links to Previous/Next posts --}}
-      {{pagination}}
-    </div>
-  </main>
-</div>
+<main role="main">
+<!-- This is the post loop - each post will be output using this markup -->
+  {{#foreach posts}}
+	<article class="{{post_class}}">
+ 		<header class="post-header">
+   		<h2><a href="{{url}}">{{title}}</a></h2>
+    </header>
+    <section class="post-excerpt">
+ 			<p>{{excerpt words="26"}} <a class="read-more" href="{{url}}">...</a></p>
+    </section>
+    <footer class="post-meta">
+      {{#if primary_author.profile_image}}<img src="{{primary_author.profile_image}}" alt="Author image" />{{/if}}
+      {{primary_author}}
+      {{tags prefix=" on "}}
+      <time class="post-date" datetime="{{date format='YYYY-MM-DD'}}">{{date format="DD MMMM YYYY"}}</time>
+    </footer>
+  </article>
+  {{/foreach}}
 
-{{!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs --}}
-{{#contentFor "scripts"}}
-  <script defer src="{{asset "js/home.js"}}"></script>
-{{/contentFor}}
+</main>
+
+<!-- Previous/next page links - displayed on every page -->
+{{pagination}}
